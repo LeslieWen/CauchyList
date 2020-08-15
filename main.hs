@@ -1,12 +1,14 @@
 module Cauchy where
+  --Leslie Wen
+  
+
   data CauchyList = CauchyList Int [Int]
   
   --Misc. helper functions for our overloaded methods
 
-  regularMulti content1 content2 i j = if (i+1==j) then 0 else
-    (content1 !! j) * (content2 !! (i-j))+(regularMulti content1 content2 i (j+1))
+  regularMulti content1 content2 i j = if (j+1==i) then 0 else
+    (content1 !! i) * (content2 !! (j-i))+(regularMulti content1 content2 (i+1) j)
   
-
   --Appends zeros to end of listX if its length is shorter than that of listY
   addZeros listX listY = (listX++take(max (length(listY)-length(listX)) 0)(repeat 0))
   
@@ -22,9 +24,9 @@ module Cauchy where
     -- Implement Num type class here   
     (CauchyList a contentA) + (CauchyList b contentB) = CauchyList a (map (`mod` a)(zipWith(+) ( addZeros (contentB) (contentA) ) ( addZeros (contentA) (contentB) ) ))
     (CauchyList a contentA) - (CauchyList b contentB) = CauchyList a (map (`mod` a)(zipWith(-) ( addZeros (contentA) (contentB) ) ( addZeros (contentB) (contentA) ) ))
-    --if b is -100, then do 
+    --if b is -100, then do scalar multiplication, j range upperbound is the size of the addZerosMulti
     (CauchyList a contentA) * (CauchyList b contentB) = if(b == -100) then (CauchyList a (map(*contentB!!0) contentA)) else 
-      CauchyList a (map (`mod` a)([regularMulti (addZerosMulti (contentA) (contentB)) (addZerosMulti (contentB) (contentA)) i 0 | i <- [0..(length contentA + length contentB-2)]]))
+      CauchyList a (map (`mod` a)([regularMulti (addZerosMulti (contentA) (contentB)) (addZerosMulti (contentB) (contentA)) 0 j | j <- [0..(length contentA + length contentB-2)]]))
 
     
 
